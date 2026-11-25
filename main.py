@@ -2,11 +2,18 @@ from flask import Flask, render_template, request
 import google.generativeai as genai
 import pdfplumber
 
+
 def extraction(pdf_name):
-    with pdfplumber.open(pdf_name) as p:
-        for page in p.pages:
-            text = page.extract_text()
-    return text
+    extracted_text = []
+
+    with pdfplumber.open(pdf_name) as pdf:
+        for page in pdf.pages:
+            page_text = page.extract_text()
+
+            if page_text:
+                extracted_text.append(page_text)
+
+    return "\n".join(extracted_text)
 
 genai.configure(api_key=" YOUR-API-KEY ") 
 model = genai.GenerativeModel(model_name="models/gemma-3-27b-it")
